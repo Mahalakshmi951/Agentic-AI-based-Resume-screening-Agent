@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Upload, FileText, Loader2, Download, Briefcase, ChevronRight, BarChart2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAnalyzeResumes } from "@workspace/api-client-react";
-import * as XLSX from "xlsx";
+import writeXlsxFile from "write-excel-file/browser";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -79,27 +79,28 @@ export default function Home() {
     }
   };
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     if (!analyzeMutation.data?.results) return;
 
-    const dataToExport = analyzeMutation.data.results.map(r => ({
-      Name: r.name,
-      Type: r.type,
-      Email: r.email,
-      Contact: r.contact,
-      TopThreeSkills: r.topThreeSkills,
-      Summary: r.summary,
-      Pros: r.pros,
-      Cons: r.cons,
-      Rating: r.rating
-    }));
+    const headers = ["Name", "Type", "Email", "Contact", "TopThreeSkills", "Summary", "Pros", "Cons", "Rating"];
+    const headerRow = headers.map(h => ({ value: h, fontWeight: "bold" as const }));
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Results");
-    
+    const dataRows = analyzeMutation.data.results.map(r => [
+      { value: r.name ?? "" },
+      { value: r.type ?? "" },
+      { value: r.email ?? "" },
+      { value: r.contact ?? "" },
+      { value: Array.isArray(r.topThreeSkills) ? r.topThreeSkills.join(", ") : (r.topThreeSkills ?? "") },
+      { value: r.summary ?? "" },
+      { value: r.pros ?? "" },
+      { value: r.cons ?? "" },
+      { value: String(r.rating ?? "") },
+    ]);
+
     const dateStr = new Date().toISOString().split('T')[0];
-    XLSX.writeFile(workbook, `recruitment_results_${dateStr}.xlsx`);
+    await writeXlsxFile([headerRow, ...dataRows], {
+      fileName: `recruitment_results_${dateStr}.xlsx`,
+    });
   };
 
   const getDecisionBadge = (decision: string) => {
