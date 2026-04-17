@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: recruiter
+    description: AI Recruiter operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /recruiter/analyze:
+    post:
+      operationId: analyzeResumes
+      tags: [recruiter]
+      summary: Analyze resumes against a job description
+      description: Send base64-encoded PDF files for analysis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyzeResumesRequest"
+      responses:
+        "200":
+          description: Analysis results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyzeResumesResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +66,101 @@ components:
           type: string
       required:
         - status
-
+    AnalyzeResumesRequest:
+      type: object
+      required:
+        - jobDescriptionBase64
+        - resumesBase64
+      properties:
+        jobDescriptionBase64:
+          type: string
+          description: Base64-encoded job description PDF
+        jobDescriptionName:
+          type: string
+          description: Original filename of the job description
+        resumesBase64:
+          type: array
+          items:
+            type: string
+          description: Array of base64-encoded resume PDFs
+        resumeNames:
+          type: array
+          items:
+            type: string
+          description: Original filenames of the resumes
+    AnalyzeResumesResponse:
+      type: object
+      required:
+        - results
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/CandidateResult"
+    CandidateResult:
+      type: object
+      required:
+        - name
+        - type
+        - email
+        - contact
+        - topThreeSkills
+        - summary
+        - pros
+        - cons
+        - rating
+        - decision
+        - matchScore
+        - matchingSkills
+        - missingSkills
+      properties:
+        name:
+          type: string
+          description: Candidate name
+        type:
+          type: string
+          description: Candidate type or role category
+        email:
+          type: string
+          description: Candidate email address
+        contact:
+          type: string
+          description: Candidate contact number
+        topThreeSkills:
+          type: string
+          description: Top three skills comma-separated
+        summary:
+          type: string
+          description: Brief summary of the candidate
+        pros:
+          type: string
+          description: Strengths of the candidate
+        cons:
+          type: string
+          description: Weaknesses or gaps of the candidate
+        rating:
+          type: number
+          description: Rating from 0 to 10
+        decision:
+          type: string
+          description: Hiring decision Selected Review or Rejected
+        matchScore:
+          type: number
+          description: Match score from 0 to 100
+        matchingSkills:
+          type: array
+          items:
+            type: string
+          description: Skills that match the job description
+        missingSkills:
+          type: array
+          items:
+            type: string
+          description: Required skills the candidate is missing
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
