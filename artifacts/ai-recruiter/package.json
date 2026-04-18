@@ -4,10 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --config vite.config.ts --host 0.0.0.0",
-    "build": "vite build --config vite.config.ts",
-    "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "dev": "vite --config vite.config.js --host 0.0.0.0",
+    "build": "vite build --config vite.config.js",
+    "serve": "vite preview --config vite.config.js --host 0.0.0.0"
   },
   "devDependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -44,9 +43,6 @@
     "@tailwindcss/typography": "^0.5.15",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/react-query": "catalog:",
-    "@types/node": "catalog:",
-    "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "@workspace/api-client-react": "workspace:*",
     "class-variance-authority": "catalog:",
@@ -75,6 +71,8 @@
     "zod": "catalog:"
   },
   "dependencies": {
+    "@rollup/rollup-win32-x64-msvc": "^4.60.1",
+    "lightningcss-win32-x64-msvc": "^1.32.0",
     "write-excel-file": "^3.0.8"
   }
 }
