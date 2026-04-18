@@ -5,7 +5,9 @@
 This project is an AI-powered Resume Screening System that automatically analyzes resumes and shortlists candidates based on job requirements.
 
 It uses Agentic AI techniques to extract information, evaluate skills, and rank candidates efficiently.
+## 🎥 Project Demo Video
 
+👉 [Watch Demo Video](./demo%20video%20ai%20resume%20screening.mp4)
 ---
 
 ## 🚀 Features
